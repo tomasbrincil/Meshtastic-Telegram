@@ -17,19 +17,17 @@ chatids_db_file = 'chati_ds.data'
 fd = open(chatids_db_file, 'rb')
 chatids = pickle.load(fd)
 
-if(debug) {
+if debug:
 	print("chatids loaded")
 	print(chatids)
-}
 
 bot = telebot.TeleBot(api_key)
 
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
 	bot.reply_to(message, "I am Meshtastic Telegram bot!\n/send messages will transmit your message\n/enable starts recieving messages to chat\n/disable will stop receiving messages\n/printurl to get url for Android APP\n/nodes print some information from NodeDB")
-	if(debug) {
+	if debug:
 		print("Printing satbot information.")
-	}
 
 @bot.message_handler(commands=['enable'])
 def send_enable(message):
@@ -38,10 +36,9 @@ def send_enable(message):
 	fw = open(chatids_db_file, 'wb')
 	pickle.dump(chatids, fw)
 	fw.close()
-	if(debug) {
+	if debug:
 		print("Enabling chat_id.")
 		print(chatids)
-	}
 
 @bot.message_handler(commands=['disable'])
 def send_enable(message):
@@ -50,10 +47,9 @@ def send_enable(message):
 	fw = open(chatids_db_file, 'wb')
 	pickle.dump(chatids, fw)
 	fw.close()
-	if(debug) {
+	if debug:
 		print("Disabling chat_id.")
 		print(chatids)
-	}
 
 @bot.message_handler(commands=['nodes'])
 def send_nodes(message):
@@ -65,10 +61,9 @@ def send_nodes(message):
 		#print(bl)
 		nodes = nodes  + user + " " + snr + " dB SNR\n"
 	bot.reply_to(message, nodes)
-	if(debug) {
+	if debug:
 		print (interface.nodes.values())
 		print(nodes)
-	}
 
 @bot.message_handler(commands=['send'])
 def send_message(message):
@@ -76,32 +71,28 @@ def send_message(message):
 	msg = message.from_user.first_name + ":" + re.sub(pattern, '', message.text)
 	bot.reply_to(message, msg)
 	interface.sendText(msg, hopLimit=1)
-	if(debug) {
+	if debug:
 		print("Sending message: ")
 		print(msg)
-	}
 
 @bot.message_handler(commands=['printurl'])
 def print_message(message):
 	msg = interface.localNode.getURL(includeAll=False)
 	bot.reply_to(message, msg)
-	if(debug) {
+	if debug:
 		print(msg)
-	}
 
 def onConnect(interface, topic=pub.AUTO_TOPIC):
-	if(debug) {
+	if debug:
 		print("Connected to the interface.")
-	}
+
 def onLost(interface, packet):
-	if(debug) {
+	if debug:
 		print("Connection to the interface has been lost")
-	}
 
 def onUpdated(interface, node):
-	if(debug) {
+	if debug:
 		print("Node has been updated.")
-	}
 
 def onReceive(interface, packet):
 	try:
@@ -109,29 +100,25 @@ def onReceive(interface, packet):
 		msg = packet_decoded.get('text')
 		if msg:
 			message =  str(packet.get('fromId')) + ": " + msg + " [snr: " + str(packet.get('rxSnr')) + ", RSSI: " + str(packet.get('rxRssi')) + ", hoplimit: " + str(packet.get('hopLimit')) + "]"
-			if(debug) {
+			if debug:
 				print("packet decoded")
 				print(f"message: {message}")
-			}
 
 			is_ping = msg.startswith("/ping")
 
 			if is_ping:
 				pong = "pong"  + " [snr: " + str(packet.get('rxSnr')) + ", RSSI: " + str(packet.get('rxRssi')) + ", hoplimit: " + str(packet.get('hopLimit')) + "]"
 				interface.sendText(pong, hopLimit=1)
-				if(debug) {
+				if debug:
 					print("ping received, sending pong with telemetry")
 					print(pong)
-				}
 
 			for i in chatids:
 				bot.send_message(i, message)
-				if(debug) {
+				if debug:
 					print("sending for chat_id")
 					print(str(i))
 					print(message)
-				}
-
 
 	except Exception as ex:
 		print (ex)
