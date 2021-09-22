@@ -12,10 +12,12 @@ from pprint import pprint
 
 debug = False
 api_key = "1989348436:ABEvMN-CO4-X0cbEHoKKLYDq-xQj23cFcZY"
+chatids_db_file = 'chat_ids.data'
+chatids = []
 
-chatids_db_file = 'chati_ds.data'
-fd = open(chatids_db_file, 'rb')
-chatids = pickle.load(fd)
+if os.path.exists(chatids_db_file):
+	with open(chatids_db_file,'rb') as rfp:
+        chatids = pickle.load(rfp)
 
 if debug:
 	print("chatids loaded")
