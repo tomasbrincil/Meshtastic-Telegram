@@ -41,7 +41,7 @@ def send_enable(message):
 		print(chatids)
 
 @bot.message_handler(commands=['disable'])
-def send_enable(message):
+def send_disable(message):
 	bot.reply_to(message, "Receiving messages has been disabled.")
 	chatids.remove(message.chat.id)
 	fw = open(chatids_db_file, 'wb')
