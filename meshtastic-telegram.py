@@ -17,7 +17,7 @@ chatids = []
 
 if os.path.exists(chatids_db_file):
 	with open(chatids_db_file,'rb') as rfp:
-	chatids = pickle.load(rfp)
+		chatids = pickle.load(rfp)
 
 if debug:
 	print("chatids loaded")
